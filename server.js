@@ -3,9 +3,12 @@ const express = require('express');
 // const ejs = require('ejs');
 const mongoose = require('mongoose');
 const Event = require('./models/event.js');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const dbURL = process.env.dbURL;
 
@@ -22,11 +25,14 @@ mongoose
         console.error('Could not connect to MongoDB:', err);
     });
 
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
 // READ: fetch all events
 app.get('/', (req, res) => {
     Event.find()
         .then((result) => {
-            console.log('res', result);
             return res.send(result);
 
         })
